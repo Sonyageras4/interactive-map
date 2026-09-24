@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Угадай регион — Культурный атлас России</title>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f7fa;
+        color: #243746;
+        font-family: Arial, sans-serif;
+      }
+
+      .game-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 25px 20px 35px;
+      }
+
+      .game-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .game-header h1 {
+        margin: 0 0 10px;
+        color: #243746;
+        font-size: 36px;
+      }
+
+      .game-header p {
+        margin: 0;
+        color: #315b70;
+        font-size: 17px;
+      }
+
+      #game-map {
+        width: 100%;
+        height: 420px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #e8f0f4;
+        box-shadow: 0 4px 18px rgba(36, 55, 70, 0.08);
+      }
+
+      /* =========================
+         LEAFLET
+      ========================= */
+
+      .leaflet-container {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      }
+
+      /* =========================
+         CUSTOM ZOOM BUTTONS
+      ========================= */
+
+      .game-zoom-control {
+        display: flex;
+        flex-direction: column;
+
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+
+        box-shadow: 0 4px 15px rgba(36, 55, 70, 0.12);
+      }
+
+      .game-zoom-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+
+        padding: 0;
+        margin: 0;
+
+        border: none;
+
+        background: #ffffff;
+        color: #315b70;
+
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+        font-size: 22px;
+        font-weight: 400;
+        line-height: 38px;
+
+        cursor: pointer;
+
+        transition: background 0.2s ease;
+      }
+
+      .game-zoom-button:hover {
+        background: #e8f0f4;
+      }
+
+      .game-zoom-button + .game-zoom-button {
+        border-top: 1px solid #e8f0f4;
+      }
+
+      /* =========================
+         ANSWERS
+      ========================= */
+
+      .answers {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        max-width: 700px;
+        margin: 25px auto 0;
+      }
+
+      .answer-button {
+        border: none;
+        border-radius: 12px;
+        padding: 16px 20px;
+
+        background: #e8f0f4;
+        color: #243746;
+
+        font-size: 16px;
+
+        cursor: pointer;
+
+        transition:
+          background 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .answer-button:hover {
+        background: #d5e4eb;
+        transform: translateY(-1px);
+      }
+
+      .answer-button.correct {
+        background: #cfe6d5;
+      }
+
+      .answer-button.wrong {
+        background: #efd1d1;
+      }
+
+      .answer-button:disabled {
+        cursor: default;
+      }
+
+      .answer-button:disabled:hover {
+        transform: none;
+      }
+
+      /* =========================
+         RESULT
+      ========================= */
+
+      .result {
+        min-height: 30px;
+        margin-top: 20px;
+
+        text-align: center;
+
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      /* =========================
+         NEXT BUTTON
+      ========================= */
+
+      .next-button {
+        display: block;
+
+        margin: 15px auto 0;
+        padding: 12px 24px;
+
+        border: none;
+        border-radius: 12px;
+
+        background: #315b70;
+        color: #ffffff;
+
+        font-size: 16px;
+
+        cursor: pointer;
+
+        transition:
+          background 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .next-button:hover {
+        background: #243746;
+        transform: translateY(-1px);
+      }
+
+      /* =========================
+         SCORE
+      ========================= */
+
+      .score {
+        text-align: center;
+
+        margin-top: 20px;
+
+        color: #315b70;
+
+        font-size: 16px;
+      }
+
+      /* =========================
+         MOBILE
+      ========================= */
+
+      @media (max-width: 700px) {
+        .game-container {
+          padding: 25px 12px 40px;
+        }
+
+        .game-header h1 {
+          font-size: 28px;
+        }
+
+        #game-map {
+          height: 450px;
+        }
+
+        .answers {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="game-container">
+      <header class="game-header">
+        <h1>Угадай регион</h1>
+
+        <p>Посмотри на карту и выбери правильный ответ</p>
+      </header>
+
+      <div id="game-map"></div>
+
+      <div class="answers">
+        <button class="answer-button">Вариант 1</button>
+        <button class="answer-button">Вариант 2</button>
+        <button class="answer-button">Вариант 3</button>
+        <button class="answer-button">Вариант 4</button>
+      </div>
+
+      <div class="result"></div>
+
+      <button class="next-button">Следующий регион →</button>
+
+      <div class="score">Счёт: 0</div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+      /* =========================
+         MAP
+      ========================= */
+
+      const map = L.map("game-map", {
+        center: [62, 100],
+        zoom: 3,
+        minZoom: 2,
+        maxZoom: 7,
+        worldCopyJump: false,
+        attributionControl: false,
+
+        /* Убираем стандартный Leaflet zoom */
+        zoomControl: false,
+      });
+
+      /* =========================
+         CUSTOM ZOOM
+      ========================= */
+
+      const ZoomControl = L.Control.extend({
+        options: {
+          position: "topleft",
+        },
+
+        onAdd: function (map) {
+          const container = L.DomUtil.create("div", "game-zoom-control");
+
+          const zoomIn = L.DomUtil.create(
+            "button",
+            "game-zoom-button",
+            container,
+          );
+
+          const zoomOut = L.DomUtil.create(
+            "button",
+            "game-zoom-button",
+            container,
+          );
+
+          zoomIn.type = "button";
+          zoomOut.type = "button";
+
+          zoomIn.innerHTML = "+";
+          zoomOut.innerHTML = "−";
+
+          zoomIn.setAttribute("aria-label", "Приблизить");
+          zoomOut.setAttribute("aria-label", "Отдалить");
+
+          L.DomEvent.disableClickPropagation(container);
+          L.DomEvent.disableScrollPropagation(container);
+
+          L.DomEvent.on(zoomIn, "click", function () {
+            map.zoomIn();
+          });
+
+          L.DomEvent.on(zoomOut, "click", function () {
+            map.zoomOut();
+          });
+
+          return container;
+        },
+      });
+
+      map.addControl(new ZoomControl());
+
+      /* =========================
+         GAME ELEMENTS
+      ========================= */
+
+      const answerButtons = document.querySelectorAll(".answer-button");
+
+      const resultElement = document.querySelector(".result");
+
+      const nextButton = document.querySelector(".next-button");
+
+      const scoreElement = document.querySelector(".score");
+
+      let regions = [];
+      let currentRegion = null;
+      let score = 0;
+      let answered = false;
+
+      /* =========================
+         REGION NAME
+      ========================= */
+
+      function getRegionName(region) {
+        const properties = region.feature?.properties || {};
+
+        const possibleNames = [
+          properties.name,
+          properties.NAME,
+          properties.Name,
+          properties.NAME_1,
+          properties.name_1,
+          properties.region,
+          properties.Region,
+          properties.title,
+          properties.Title,
+        ];
+
+        for (const name of possibleNames) {
+          if (typeof name === "string" && name.trim() !== "") {
+            return name.trim();
+          }
+        }
+
+        return "Неизвестный регион";
+      }
+
+      /* =========================
+         SHUFFLE
+      ========================= */
+
+      function shuffle(array) {
+        const shuffled = [...array];
+
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        return shuffled;
+      }
+
+      /* =========================
+         NEW ROUND
+      ========================= */
+
+      function startNewRound() {
+        if (regions.length < 4) {
+          resultElement.textContent =
+            "Недостаточно регионов для создания вариантов ответа.";
+
+          return;
+        }
+
+        answered = false;
+
+        resultElement.textContent = "";
+
+        answerButtons.forEach((button) => {
+          button.disabled = false;
+
+          button.classList.remove("correct", "wrong");
+        });
+
+        /*
+          Кнопка следующего региона
+          теперь всегда остаётся видимой.
+        */
+
+        currentRegion = regions[Math.floor(Math.random() * regions.length)];
+
+        /* =========================
+           RESET ALL REGIONS
+        ========================= */
+
+        regions.forEach((region) => {
+          region.setStyle({
+            color: "#ffffff",
+            weight: 1,
+            fillColor: "#c4d8e8",
+            fillOpacity: 0.9,
+          });
+        });
+
+        /* =========================
+           HIGHLIGHT CURRENT REGION
+        ========================= */
+
+        currentRegion.setStyle({
+          color: "#ffffff",
+          weight: 2,
+          fillColor: "#5b8db8",
+          fillOpacity: 1,
+        });
+        const regionBounds = currentRegion.getBounds();
+
+        if (regionBounds.isValid()) {
+          map.fitBounds(regionBounds, {
+            padding: [60, 60],
+            maxZoom: 4,
+            animate: true,
+          });
+        }
+        /* =========================
+           ANSWERS
+        ========================= */
+
+        const correctAnswer = getRegionName(currentRegion);
+
+        const otherRegions = regions.filter(
+          (region) => region !== currentRegion,
+        );
+
+        const wrongAnswers = shuffle(otherRegions)
+          .slice(0, 3)
+          .map((region) => getRegionName(region));
+
+        const allAnswers = shuffle([correctAnswer, ...wrongAnswers]);
+
+        answerButtons.forEach((button, index) => {
+          button.textContent = allAnswers[index];
+
+          button.dataset.answer = allAnswers[index];
+        });
+      }
+
+      /* =========================
+         ANSWER CHECK
+      ========================= */
+
+      answerButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (answered || !currentRegion) {
+            return;
+          }
+
+          answered = true;
+
+          const selectedAnswer = button.dataset.answer;
+
+          const correctAnswer = getRegionName(currentRegion);
+
+          answerButtons.forEach((answerButton) => {
+            answerButton.disabled = true;
+          });
+
+          /* Правильный ответ */
+
+          if (selectedAnswer === correctAnswer) {
+            button.classList.add("correct");
+
+            score++;
+
+            resultElement.textContent = "Правильно! 🎉";
+          } else {
+            /* Неправильный ответ */
+            button.classList.add("wrong");
+
+            answerButtons.forEach((answerButton) => {
+              if (answerButton.dataset.answer === correctAnswer) {
+                answerButton.classList.add("correct");
+              }
+            });
+
+            resultElement.textContent =
+              "Неправильно. Правильный ответ: " + correctAnswer;
+          }
+
+          scoreElement.textContent = "Счёт: " + score;
+        });
+      });
+
+      /* =========================
+         NEXT REGION
+      ========================= */
+
+      nextButton.addEventListener("click", () => {
+        startNewRound();
+      });
+
+      /* =========================
+         LOAD MAP
+      ========================= */
+
+      fetch(
+        "https://raw.githubusercontent.com/alt-dmitry/RussianMap/master/output.js",
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Не удалось загрузить карту.");
+          }
+
+          return response.text();
+        })
+
+        .then((text) => {
+          const match = text.match(/var\s+\w+\s*=\s*(\{[\s\S]*\});?\s*$/);
+
+          if (!match) {
+            throw new Error("Не удалось прочитать данные регионов.");
+          }
+
+          const data = JSON.parse(match[1]);
+
+          /*
+            interactive: false
+
+            Регион не реагирует на наведение
+            курсора и не выдаёт подсказку.
+
+            Сама карта при этом работает:
+            её можно двигать и масштабировать.
+          */
+
+          const regionsLayer = L.geoJSON(data, {
+            interactive: false,
+
+            style: {
+              color: "#ffffff",
+              weight: 1,
+              fillColor: "#c4d8e8",
+              fillOpacity: 0.9,
+            },
+          }).addTo(map);
+
+          regions = regionsLayer.getLayers();
+
+          startNewRound();
+        })
+
+        .catch((error) => {
+          console.error("Ошибка загрузки карты:", error);
+
+          resultElement.textContent = "Не удалось загрузить карту регионов.";
+        });
+    </script>
+  </body>
+</html>
