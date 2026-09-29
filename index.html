@@ -52,7 +52,15 @@
         font-size: 28px;
         color: #2d2d2d;
       }
-
+      .region-flag {
+        display: block;
+        width: 110px;
+        height: 70px;
+        object-fit: cover;
+        margin: 0 auto 20px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+      }
       .region-description {
         margin: 0 0 22px;
         line-height: 1.6;
@@ -430,13 +438,24 @@
       <section class="game-invite">
         <div class="game-invite-content">
           <h2>Проверь свои знания о регионах России!</h2>
+
           <p>
-            Попробуй угадать регион по его очертаниям и узнай, насколько хорошо
-            ты знаешь карту России.
+            Готов немного испытать себя? Выбирай игру, делай свой выбор и
+            попробуй набрать как можно больше очков!
           </p>
-          <a href="game.html" class="game-invite-button">Играть в игру →</a>
+
+          <div class="game-invite-buttons">
+            <a href="game.html" class="game-invite-button">
+              Угадать регион по очертаниям →
+            </a>
+
+            <a href="game-flags.html" class="game-invite-button">
+              Угадать регион по флагу →
+            </a>
+          </div>
         </div>
       </section>
+
       <section class="about-project" id="about-project">
         <div class="about-project-heading">
           <span class="about-project-label">О проекте</span>
@@ -500,6 +519,8 @@
       <button class="close-card" onclick="closeRegionCard()">×</button>
 
       <h2 id="region-name">Регион</h2>
+
+      <img id="region-flag" class="region-flag" src="" alt="" />
 
       <p id="region-summary" class="subtitle">
         Здесь появится краткая информация о регионе.
@@ -1053,7 +1074,180 @@
             "Регион Дальнего Востока России с особым историческим статусом и культурным наследием еврейской автономии.",
         },
       };
+      const regionFlags = {
+        "Республика Адыгея":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Adygea.svg",
+        "Республика Алтай":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Altai_Republic.svg",
+        "Республика Башкортостан":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Bashkortostan.svg",
+        "Республика Бурятия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Buryatia.svg",
+        "Республика Дагестан":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Dagestan.svg",
+        "Республика Ингушетия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Ingushetia.svg",
+        "Кабардино-Балкарская республика":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kabardino-Balkaria.svg",
+        "Карачаево-Черкесская республика":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Karachay-Cherkessia.svg",
+        "Республика Калмыкия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kalmykia.svg",
+        "Республика Карелия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Karelia.svg",
+        "Республика Коми":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Komi.svg",
+        "Республика Крым":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Crimea.svg",
+        "Республика Марий Эл":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Mari_El.svg",
+        "Республика Мордовия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Mordovia.svg",
+        "Республика Северная Осетия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_North_Ossetia.svg",
+        "Республика Саха (Якутия)":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Sakha.svg",
+        "Республика Татарстан":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tatarstan.svg",
+        "Республика Тыва":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tuva.svg",
+        "Удмуртская Республика":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Udmurtia.svg",
+        "Чеченская республика":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Chechnya.svg",
+        "Чувашская республика":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Chuvashia.svg",
+        "Республика Хакасия":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Khakassia.svg",
 
+        "Алтайский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Altai_Krai.svg",
+        "Камчатский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kamchatka_Krai.svg",
+        "Краснодарский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Krasnodar_Krai.svg",
+        "Красноярский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Krasnoyarsk_Krai.svg",
+        "Пермский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Perm_Krai.svg",
+        "Приморский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Primorsky_Krai.svg",
+        "Ставропольский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Stavropol_Krai.svg",
+        "Хабаровский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Khabarovsk_Krai.svg",
+        "Забайкальский край":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Zabaykalsky_Krai.svg",
+
+        "Амурская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Amur_Oblast.svg",
+        "Архангельская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Arkhangelsk_Oblast.svg",
+        "Астраханская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Astrakhan_Oblast.svg",
+        "Белгородская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Belgorod_Oblast.svg",
+        "Брянская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Bryansk_Oblast.svg",
+        "Владимирская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Vladimir_Oblast.svg",
+        "Волгоградская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Volgograd_Oblast.svg",
+        "Вологодская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Vologda_Oblast.svg",
+        "Воронежская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Voronezh_Oblast.svg",
+        "Ивановская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Ivanovo_Oblast.svg",
+        "Иркутская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Irkutsk_Oblast.svg",
+        "Калининградская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kaliningrad_Oblast.svg",
+        "Калужская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kaluga_Oblast.svg",
+        "Кемеровская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kemerovo_Oblast.svg",
+        "Кировская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kirov_Oblast.svg",
+        "Костромская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kostroma_Oblast.svg",
+        "Курганская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kurgan_Oblast.svg",
+        "Курская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Kursk_Oblast.svg",
+        "Ленинградская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Leningrad_Oblast.svg",
+        "Липецкая область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Lipetsk_Oblast.svg",
+        "Магаданская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Magadan_Oblast.svg",
+        "Московская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Moscow_Oblast.svg",
+        "Мурманская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Murmansk_Oblast.svg",
+        "Нижегородская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Nizhny_Novgorod_Oblast.svg",
+        "Новгородская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Novgorod_Oblast.svg",
+        "Новосибирская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Novosibirsk_Oblast.svg",
+        "Омская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Omsk_Oblast.svg",
+        "Оренбургская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Orenburg_Oblast.svg",
+        "Орловская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Oryol_Oblast.svg",
+        "Пензенская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Penza_Oblast.svg",
+        "Псковская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Pskov_Oblast.svg",
+        "Ростовская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Rostov_Oblast.svg",
+        "Рязанская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Ryazan_Oblast.svg",
+        "Самарская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Samara_Oblast.svg",
+        "Саратовская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Saratov_Oblast.svg",
+        "Сахалинская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Sakhalin_Oblast.svg",
+        "Свердловская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Sverdlovsk_Oblast.svg",
+        "Смоленская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Smolensk_Oblast.svg",
+        "Тамбовская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tambov_Oblast.svg",
+        "Тверская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tver_Oblast.svg",
+        "Томская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tomsk_Oblast.svg",
+        "Тульская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tula_Oblast.svg",
+        "Тюменская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Tyumen_Oblast.svg",
+        "Ульяновская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Ulyanovsk_Oblast.svg",
+        "Челябинская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Chelyabinsk_Oblast.svg",
+        "Ярославская область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Yaroslavl_Oblast.svg",
+
+        Москва:
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Moscow.svg",
+        "Санкт-Петербург":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Saint_Petersburg.svg",
+
+        "Еврейская автономная область":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Jewish_Autonomous_Oblast.svg",
+        "Чукотский автономный округ":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Chukotka.svg",
+        "Ханты-Мансийский АО":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Yugra.svg",
+        "Ненецкий автономный округ":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Nenets_Autonomous_Okrug.svg",
+        "Ямало-Ненецкий АО":
+          "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flag_of_Yamalo-Nenets_Autonomous_Okrug.svg",
+      };
       /* =====================================
                            ПОДРОБНАЯ ИНФОРМАЦИЯ
                            ===================================== */
@@ -3831,6 +4025,15 @@
         }
 
         card.classList.add("visible");
+        const flag = document.getElementById("region-flag");
+
+        if (regionFlags[name]) {
+          flag.src = regionFlags[name];
+          flag.alt = `Флаг региона ${name}`;
+          flag.style.display = "block";
+        } else {
+          flag.style.display = "none";
+        }
       }
 
       /* =====================================
